@@ -162,3 +162,61 @@ SELECT
 FROM Clusters c 
 GROUP BY region 
 ORDER BY average
+
+/* Задача 11.
+С помощью подзапроса получите заказы товаров
+из 4 и 6 категории (подзапрос в подзапросе).
+Таблицы OrderDetails, Products 
+*/
+
+SELECT *
+FROM Orders o 
+WHERE OrderID IN (SELECT OrderID from OrderDetails od
+WHERE ProductID IN (SELECT ProductID from Products p
+WHERE CategoryID IN (4,6) ))
+
+/* Задача 12.
+В какие страны доставляет товары
+компания Speedy_Express
+
+*/
+
+SELECT DISTINCT Country 
+FROM Customers c 
+WHERE CustomerID IN (SELECT CustomerID FROM Orders o
+WHERE ShipperID IN (SELECT ShipperID FROM Shippers s
+WHERE ShipperName = 'Speedy_Express'))
+
+
+/* Задача 13.
+Получите 3 страны, где больше всего
+клиентов (таблица Customers).
+*/
+
+SELECT 
+	country, 
+	count(*) as cnt 
+FROM Customers
+GROUP BY country
+ORDER BY cnt DESC
+LIMIT 3
+
+/* Задача 14.
+Назовите три самых популярных города и название
+страны среди трех популярных стран (где больше
+всего клиентов)
+*/
+
+SELECT 
+	city, 
+	country, 
+	count(*) as cnt
+FROM Customers
+	where country in (SELECT country
+FROM Customers
+GROUP BY country
+ORDER BY count(*) DESC
+)
+group by city, country
+order by cnt desc
+LIMIT 3 
